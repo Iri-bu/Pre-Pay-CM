@@ -1,0 +1,911 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Менеджер каналов - общие настройки</title>
+  <style>
+    :root {
+      --nav: #344b67;
+      --nav-dark: #293b52;
+      --nav-line: #26364a;
+      --nav-active: #4c6b91;
+      --nav-selected: #edf2f6;
+      --page: #eef3f7;
+      --panel: #fff;
+      --line: #cfd9e4;
+      --line-soft: #e1e8ef;
+      --tab: #dfe7f2;
+      --header: #3a4d68;
+      --text: #40536f;
+      --muted: #75879d;
+      --blue: #1f73d2;
+      --blue-dark: #155caa;
+      --info-bg: #def5ff;
+      --info-line: #9ddffc;
+      --green: #0f9d6a;
+      --orange: #d98a00;
+      --red: #f1161f;
+      --shadow: 0 1px 4px rgba(41, 59, 82, .18);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.42;
+    }
+
+    button, input, select { font: inherit; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 330px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: var(--nav);
+      color: #d7e2ee;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      box-shadow: inset -1px 0 0 rgba(0,0,0,.28);
+    }
+
+    .hotel {
+      height: 56px;
+      background: var(--nav-dark);
+      display: grid;
+      grid-template-columns: 30px 38px minmax(0, 1fr);
+      gap: 8px;
+      align-items: center;
+      padding: 7px 16px;
+    }
+
+    .dots {
+      font-size: 26px;
+      line-height: 1;
+      color: #b8c6d6;
+      transform: rotate(90deg);
+      text-align: center;
+    }
+
+    .avatar {
+      width: 29px;
+      height: 29px;
+      border-radius: 50%;
+      background: #eaf1f8;
+      color: #2e4058;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+    }
+
+    .hotel strong,
+    .hotel span {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .hotel strong { color: #fff; font-size: 15px; }
+    .hotel span { color: #d8e2ed; font-size: 14px; }
+
+    .nav-list {
+      flex: 1;
+      overflow: auto;
+      scrollbar-color: #172637 transparent;
+    }
+
+    .nav-row {
+      min-height: 56px;
+      border-bottom: 1px solid var(--nav-line);
+      display: grid;
+      grid-template-columns: 32px minmax(0, 1fr) 20px;
+      align-items: center;
+      gap: 10px;
+      padding: 0 18px;
+      color: #c8d4e2;
+      font-weight: 700;
+    }
+
+    .nav-row .ico {
+      width: 24px;
+      height: 24px;
+      border: 2px solid #b8c6d6;
+      border-radius: 5px;
+      opacity: .86;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+    }
+
+    .nav-row.open { background: #314864; color: #fff; }
+
+    .nav-row.sub {
+      min-height: 47px;
+      grid-template-columns: 32px minmax(0, 1fr) 20px;
+      padding-left: 24px;
+      background: var(--nav-active);
+      color: #fff;
+    }
+
+    .nav-row.sub .ico { border: 0; }
+
+    .nav-row.selected {
+      background: var(--nav-selected);
+      color: #3c516d;
+      box-shadow: inset 0 1px 0 #fff;
+    }
+
+    .nav-row .alert {
+      justify-self: end;
+      background: #f64b50;
+      color: #fff;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .support {
+      padding: 16px 28px 8px;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .support span {
+      display: block;
+      margin-top: 14px;
+      color: #d8e2ed;
+      font-weight: 400;
+    }
+
+    .main {
+      min-width: 0;
+      display: grid;
+      grid-template-rows: 56px minmax(0, 1fr) 86px;
+    }
+
+    .topbar {
+      background: linear-gradient(90deg, #f4f6ff 0%, #ffe3ed 100%);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px 0 34px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .save {
+      min-height: 42px;
+      border: 0;
+      border-radius: 4px;
+      background: var(--blue);
+      color: #fff;
+      padding: 0 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+    }
+
+    .save:hover { background: var(--blue-dark); }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: var(--blue);
+      font-weight: 700;
+      min-width: 0;
+    }
+
+    .athena {
+      border: 0;
+      min-height: 42px;
+      padding: 0 15px;
+      background: var(--blue);
+      color: #fff;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    .top-ico {
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--blue);
+      border-radius: 4px;
+      display: grid;
+      place-items: center;
+      line-height: 1;
+      color: var(--blue);
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-left: 12px;
+      min-width: 0;
+    }
+
+    .user-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--blue);
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+    }
+
+    .content {
+      padding: 28px 34px 44px;
+      overflow: auto;
+    }
+
+    h1 {
+      margin: 0 0 24px;
+      color: var(--header);
+      font-size: 48px;
+      line-height: 1.1;
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+
+    .tabs {
+      min-height: 56px;
+      background: var(--tab);
+      border-bottom: 2px solid #61a7f7;
+      display: flex;
+      align-items: flex-end;
+      margin-bottom: 22px;
+    }
+
+    .tab {
+      min-height: 56px;
+      border: 0;
+      border-left: 1px solid transparent;
+      background: transparent;
+      color: #40536f;
+      padding: 0 20px;
+      font-weight: 700;
+      cursor: default;
+    }
+
+    .tab.active {
+      background: #fff;
+      color: #3c516d;
+      border: 2px solid #61a7f7;
+      border-bottom: 0;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      margin-bottom: 22px;
+      padding: 22px 24px;
+      box-shadow: 0 1px 0 rgba(255,255,255,.8);
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 17px;
+      border-bottom: 1px solid var(--line-soft);
+      margin-bottom: 22px;
+    }
+
+    .panel h2 {
+      margin: 0;
+      font-size: 26px;
+      line-height: 1.2;
+      font-weight: 400;
+      color: var(--header);
+    }
+
+    .help {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #8ea2b9;
+      border-radius: 50%;
+      color: #8ea2b9;
+      font-size: 12px;
+      display: inline-grid;
+      place-items: center;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    .info {
+      border: 1px solid var(--info-line);
+      background: var(--info-bg);
+      border-radius: 4px;
+      padding: 14px 16px;
+      margin-bottom: 22px;
+      color: var(--text);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .info-ico {
+      flex: 0 0 auto;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid #22a9ed;
+      color: #22a9ed;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .form {
+      display: grid;
+      gap: 18px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .form-row > label {
+      padding-top: 8px;
+      color: var(--text);
+    }
+
+    .hint {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .control {
+      width: 100%;
+      min-height: 38px;
+      border: 1px solid #aac0d8;
+      border-radius: 4px;
+      background: #f7fafc;
+      color: var(--text);
+      padding: 8px 10px;
+    }
+
+    .switch-line {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      min-height: 38px;
+    }
+
+    .switch {
+      width: 52px;
+      height: 28px;
+      border: 0;
+      border-radius: 18px;
+      background: #b8c6d6;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .switch::after {
+      content: "";
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #fff;
+      position: absolute;
+      left: 2px;
+      top: 2px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.25);
+      transition: transform .16s ease;
+    }
+
+    .switch.on { background: var(--blue); }
+    .switch.on::after { transform: translateX(24px); }
+
+    .button {
+      min-height: 38px;
+      border: 1px solid var(--blue);
+      border-radius: 4px;
+      background: #fff;
+      color: var(--blue);
+      padding: 0 13px;
+      cursor: pointer;
+      font-weight: 700;
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .button.primary {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .button.ghost {
+      border-color: transparent;
+      background: transparent;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 24px;
+      border-radius: 12px;
+      padding: 3px 10px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge.red { background: var(--red); }
+    .badge.green { background: var(--green); }
+    .badge.orange { background: var(--orange); }
+    .badge.blue { background: var(--blue); }
+    .badge.gray { background: #8da0b7; }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--line-soft);
+    }
+
+    .table th {
+      background: #d7dee8;
+      color: #4c5f78;
+      text-align: left;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 12px 14px;
+      vertical-align: middle;
+    }
+
+    .table td {
+      border-top: 1px solid var(--line-soft);
+      padding: 11px 14px;
+      vertical-align: top;
+      background: #fff;
+    }
+
+    .table a {
+      color: var(--blue);
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .channel-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 34px;
+    }
+
+    .action-menu {
+      width: 30px;
+      height: 30px;
+      border: 2px solid var(--blue);
+      border-radius: 4px;
+      color: var(--blue);
+      background: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .footer {
+      background: #dce6f2;
+      color: #8aa0ba;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 16px 34px;
+      font-size: 14px;
+    }
+
+    .stores {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .store {
+      height: 42px;
+      min-width: 132px;
+      border-radius: 6px;
+      background: #050505;
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .tl-logo {
+      color: #fff;
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: .03em;
+    }
+
+    .toast {
+      position: fixed;
+      right: 28px;
+      bottom: 24px;
+      background: #253a52;
+      color: #fff;
+      border-radius: 4px;
+      padding: 12px 14px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.24);
+      transform: translateY(14px);
+      opacity: 0;
+      transition: .18s ease;
+      pointer-events: none;
+      z-index: 40;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 1180px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { min-height: auto; }
+      .nav-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        overflow: visible;
+      }
+      .support { display: none; }
+    }
+
+    @media (max-width: 760px) {
+      .topbar {
+        padding: 8px 14px;
+        min-height: 74px;
+        align-items: flex-start;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .top-actions {
+        width: 100%;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+      }
+
+      .top-ico {
+        width: 22px;
+        height: 22px;
+        font-size: 12px;
+      }
+
+      .user-pill {
+        flex-basis: 100%;
+        padding-left: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .content { padding: 18px 12px 28px; }
+      h1 { font-size: 34px; margin-bottom: 16px; }
+      .tabs { overflow-x: auto; align-items: stretch; }
+      .tab { white-space: nowrap; }
+      .panel { padding: 16px 14px; }
+      .panel-head { align-items: flex-start; flex-direction: column; }
+      .form-row { grid-template-columns: 1fr; gap: 6px; }
+      .table-wrap { overflow-x: auto; }
+      .table { min-width: 840px; }
+      .nav-list { grid-template-columns: 1fr; }
+      .footer {
+        flex-direction: column;
+        align-items: flex-start;
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+      .stores { flex-wrap: wrap; gap: 10px; max-width: 100%; }
+      .store { min-width: 118px; }
+      .tl-logo { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="hotel">
+        <div class="dots">...</div>
+        <div class="avatar">T</div>
+        <div>
+          <strong>TravelLine - Вебинары</strong>
+          <span>1024 Йошкар-Ола</span>
+        </div>
+      </div>
+      <div class="nav-list">
+        <div class="nav-row"><span class="ico">?</span><span>Помощник</span><span>⌄</span></div>
+        <div class="nav-row"><span class="ico">▣</span><span>Управление номерами</span><span>⌄</span></div>
+        <div class="nav-row"><span class="ico">⌂</span><span>Настройки гостиницы</span><span>⌄</span></div>
+        <div class="nav-row"><span class="ico">▦</span><span>Управление отелем</span><span>⌄</span></div>
+        <div class="nav-row open"><span class="ico">✣</span><span>Менеджер каналов</span><span>⌃</span></div>
+        <div class="nav-row sub"><span></span><span>Управление каналами</span><span></span></div>
+        <div class="nav-row sub"><span></span><span>Обновления в каналах</span><span></span></div>
+        <div class="nav-row sub selected"><span></span><span>Настройки</span><span></span></div>
+        <div class="nav-row sub"><span></span><span>Админка</span><span class="alert">A</span></div>
+        <div class="nav-row sub"><span></span><span>Автоматическое выставление счетов</span><span></span></div>
+        <div class="nav-row"><span class="ico">⌾</span><span>Метапоисковики</span><span></span></div>
+        <div class="nav-row"><span class="ico">◎</span><span>Аналитика</span><span></span></div>
+        <div class="nav-row"><span class="ico">▰</span><span>Репутация</span><span>⌄</span></div>
+        <div class="nav-row"><span class="ico">◱</span><span>Конструктор сайта</span><span>⌄</span></div>
+        <div class="nav-row"><span class="ico">↗</span><span>Оптимизатор цен</span><span>⌄</span></div>
+        <div class="nav-row"><span class="ico">✉</span><span>Маркетинг</span><span>⌄</span></div>
+        <div class="nav-row"><span class="ico">□</span><span>Документооборот</span><span>⌄</span></div>
+        <div class="nav-row"><span class="ico">▥</span><span>Отчеты</span><span>⌄</span></div>
+        <div class="nav-row"><span class="ico">☑</span><span>Онлайн-регистрация</span><span>⌄</span></div>
+        <div class="nav-row"><span class="ico">↔</span><span>Сравнение цен</span><span></span></div>
+        <div class="nav-row"><span class="ico">▤</span><span>Миграционный учет</span><span>⌄</span></div>
+      </div>
+      <div class="support">Служба поддержки <span>support@travelline.ru</span></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="save" id="saveBtn">Сохранить</button>
+        <div class="top-actions">
+          <button class="athena">Афина</button>
+          <span class="top-ico">▣</span>
+          <span class="top-ico">⚙</span>
+          <span class="top-ico">⌂</span>
+          <span class="top-ico">?</span>
+          <span class="user-pill"><span class="user-icon">●</span> irina.burkova</span>
+        </div>
+      </header>
+
+      <section class="content">
+        <h1>Общие настройки</h1>
+        <div class="tabs">
+          <button class="tab active">Общие настройки</button>
+          <button class="tab">Уведомления</button>
+          <button class="tab">Составные типы размещений</button>
+          <button class="tab">Уведомления о снижении цены</button>
+        </div>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Технические настройки Менеджера каналов</h2>
+          </div>
+          <div class="info">
+            <span class="info-ico">i</span>
+            <div>
+              Технические уведомления отправляются на адреса: <b>qa-confirmations@travelline.ru</b>.
+              Добавьте email в поле ниже, если вы хотите чтобы технические уведомления отправлялись Менеджером каналов на другие адреса.
+            </div>
+          </div>
+          <div class="form">
+            <div class="form-row">
+              <label for="emailInput">Email</label>
+              <div>
+                <input class="control" id="emailInput" type="email">
+                <div class="hint"><button class="button ghost" id="addEmailBtn">+ Добавить email</button></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Предоплаты из OTA <span class="help">?</span></h2>
+          </div>
+          <div class="info">
+            <span class="info-ico">i</span>
+            <div>
+              Настройка определяет, создавать ли в WebPMS фактический платеж, когда канал присылает предоплату.
+              Общее правило действует для объекта, а для отдельных OTA-каналов можно задать исключение.
+            </div>
+          </div>
+          <div class="form">
+            <div class="form-row">
+              <label>Общее правило для объекта</label>
+              <div>
+                <div class="switch-line">
+                  <button class="switch" id="defaultPaymentSwitch" aria-label="Передавать предоплату OTA как информацию в комментарии"></button>
+                  <b id="defaultPaymentLabel">Предоплата передается как фактический платеж</b>
+                </div>
+                <div class="hint">Используется как значение по умолчанию; для каждого канала правило можно изменить отдельно.</div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label>Правила по каналам</label>
+              <div class="table-wrap">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Канал</th>
+                      <th>Правило</th>
+                      <th>Что будет создано в WebPMS</th>
+                    </tr>
+                  </thead>
+                  <tbody id="channelRows"></tbody>
+                </table>
+                <div class="hint">Исключение по каналу имеет приоритет над общим правилом объекта.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Правила аннуляции <span class="help">?</span></h2>
+          </div>
+          <button class="button primary">+ Добавить правило аннуляции</button>
+          <div class="table-wrap" style="margin-top: 22px;">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Название</th>
+                  <th>Условия отмены и штрафы</th>
+                  <th>Тарифные планы</th>
+                  <th>Действие</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><a>Штраф при поздней отмене</a></td>
+                  <td>Первых суток, 1</td>
+                  <td><span class="badge red">НЕТ</span></td>
+                  <td><button class="action-menu">≡</button></td>
+                </tr>
+                <tr>
+                  <td><a>Невозвратный тариф</a></td>
+                  <td>От стоимости брони, 100 %</td>
+                  <td><span class="badge red">НЕТ</span></td>
+                  <td><button class="action-menu">≡</button></td>
+                </tr>
+                <tr>
+                  <td><a>123</a></td>
+                  <td>Без штрафа</td>
+                  <td><span class="badge red">НЕТ</span></td>
+                  <td><button class="action-menu">≡</button></td>
+                </tr>
+                <tr>
+                  <td><a>Гибкое</a></td>
+                  <td>Первых суток, 1</td>
+                  <td><span class="badge red">НЕТ</span></td>
+                  <td><button class="action-menu">≡</button></td>
+                </tr>
+                <tr>
+                  <td><a>Невозвратный</a></td>
+                  <td>Без штрафа</td>
+                  <td><span class="badge red">НЕТ</span></td>
+                  <td><button class="action-menu">≡</button></td>
+                </tr>
+                <tr>
+                  <td><a>тест</a></td>
+                  <td>Без штрафа</td>
+                  <td><span class="badge red">НЕТ</span></td>
+                  <td><button class="action-menu">≡</button></td>
+                </tr>
+                <tr>
+                  <td><a>213</a></td>
+                  <td>Без штрафа</td>
+                  <td><span class="badge red">НЕТ</span></td>
+                  <td><button class="action-menu">≡</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <footer class="footer">
+        <div>© ООО “ТРЭВЕЛ ЛАЙН СИСТЕМС”, 2021 - 2026<br>TravelLine: Platform — автоматизация процессов для гостиничного бизнеса</div>
+        <div class="stores">
+          <div class="store">App Store</div>
+          <div class="store">Google Play</div>
+          <div class="tl-logo">TRAVELLINE</div>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const state = {
+      defaultAsComment: false,
+      channels: [
+        { id: 'ostrovok', name: 'Островок', asComment: false },
+        { id: 'yandex', name: 'Яндекс.Путешествия', asComment: false },
+        { id: 'avito', name: 'Авито', asComment: true },
+        { id: 'sutochno', name: 'Суточно.ру', asComment: false },
+        { id: 'booking-api', name: 'Booking API', asComment: false }
+      ]
+    };
+
+    function resultText(channel) {
+      return channel.asComment
+        ? 'Предоплата будет передана в комментарии к брони'
+        : 'Создастся фактический платеж по предоплате канала';
+    }
+
+    function renderChannels() {
+      document.getElementById('defaultPaymentSwitch').classList.toggle('on', state.defaultAsComment);
+      document.getElementById('defaultPaymentLabel').textContent = state.defaultAsComment
+        ? 'Предоплата передается как информация в комментарии'
+        : 'Предоплата передается как фактический платеж';
+
+      document.getElementById('channelRows').innerHTML = state.channels.map(channel => {
+        return `
+          <tr>
+            <td>${channel.name}</td>
+            <td>
+              <div class="channel-rule">
+                <button class="switch ${channel.asComment ? 'on' : ''}" data-channel="${channel.id}" aria-label="Передавать предоплату ${channel.name} как информацию в комментарии"></button>
+                <b>${channel.asComment ? 'Информация в комментарии' : 'Фактический платеж'}</b>
+              </div>
+            </td>
+            <td>${resultText(channel)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      document.querySelectorAll('[data-channel]').forEach(button => {
+        button.addEventListener('click', () => {
+          const channel = state.channels.find(item => item.id === button.dataset.channel);
+          channel.asComment = !channel.asComment;
+          renderChannels();
+        });
+      });
+    }
+
+    function toast(message) {
+      const node = document.getElementById('toast');
+      node.textContent = message;
+      node.classList.add('show');
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => node.classList.remove('show'), 2200);
+    }
+
+    document.getElementById('defaultPaymentSwitch').addEventListener('click', () => {
+      state.defaultAsComment = !state.defaultAsComment;
+      state.channels.forEach(channel => {
+        channel.asComment = state.defaultAsComment;
+      });
+      renderChannels();
+    });
+
+    document.getElementById('saveBtn').addEventListener('click', () => toast('Настройки сохранены'));
+    document.getElementById('addEmailBtn').addEventListener('click', () => toast('Поле email добавлено'));
+    renderChannels();
+  </script>
+</body>
+</html>
